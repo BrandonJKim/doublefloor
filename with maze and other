@@ -1,0 +1,476 @@
+import java.util.*;
+
+public class Main {
+    private static final Scanner scanner = new Scanner(System.in);
+    private static final Random rand = new Random();
+    private static double goldz = 0;
+    private static double goldMultiplier = 1;
+    private static boolean mazeEntered = false;
+    private static Set<String> inventory = new HashSet<>();
+    private static int health = 100;
+    private static int mazeX = 0;
+    private static int mazeY = 0;
+    private static boolean trollDefeated = false; 
+    private static boolean gorgonDefeated = false; 
+    private static int currentMazeLevel = 1;
+
+    // OG Maze 1
+    static char[][] maze = {
+            {'W', ' ', ' ', ' ', 'W', 'W', ' ', ' ', ' '}, // y=4
+            {'W', ' ', ' ', 'W', ' ', 'W', 'W', ' ', 'W'}, // y=3
+            {' ', ' ', 'W', ' ', ' ', 'W', ' ', ' ', 'W'}, // y=2
+            {' ', 'W', 'W', 'W', ' ', ' ', 'W', ' ', ' '}, // y=1
+            {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'W'}, // y=0
+            {'W', ' ', 'W', 'W', 'W', ' ', 'W', ' ', ' '}, // y=-1
+            {' ', ' ', 'W', ' ', 'W', 'W', 'W', ' ', ' '}, // y=-2
+            {'W', ' ', ' ', ' ', ' ', ' ', ' ', 'W', 'W'}, // y=-3
+            {'W', 'W', 'W', ' ', 'W', 'W', ' ', ' ', 'W'}  // y=-4
+    };
+
+    // New Maze 2
+    static char[][] maze2 = {
+            {' ', 'W', ' ', 'W', ' ', 'W', ' ', 'W', ' '}, // y=4
+            {' ', 'W', ' ', 'W', ' ', 'W', ' ', ' ', ' '}, // y=3
+            {' ', 'W', ' ', 'W', ' ', ' ', 'W', 'W', ' '}, // y=2
+            {' ', ' ', ' ', ' ', 'W', ' ', ' ', ' ', ' '}, // y=1
+            {'W', 'W', 'W', ' ', ' ', ' ', 'W', 'W', ' '}, // y=0
+            {' ', ' ', ' ', 'W', ' ', 'W', ' ', ' ', ' '}, // y=-1
+            {'W', 'W', ' ', ' ', ' ', 'W', ' ', 'W', ' '}, // y=-2
+            {' ', ' ', 'W', 'W', ' ', 'W', ' ', 'W', ' '}, // y=-3
+            {' ', 'W', ' ', ' ', ' ', ' ', ' ', 'W', ' '}  // y=-4
+    };
+
+    public static void main(String[] args) {
+        System.out.println("Trapped in a maze, you must find the way out.");
+        maze[4][4] = 'P'; 
+        mazeX = 0;
+        mazeY = 0;
+        gold();
+    }
+
+    public static void gold() {
+        while (true) {
+            System.out.printf("You have %.0f gold.\n", goldz);
+            System.out.println("Choose an action:");
+            System.out.println("1. Mine");
+            System.out.println("2. Visit Shop");
+            System.out.println("3. Enter Maze--YOU CANNOT EXIT AFTER ENTERING!");
+
+            String input = scanner.nextLine();
+
+            switch (input) {
+                case "1":
+                    goldz += goldMultiplier;
+                    break;
+                case "2":
+                    shop();
+                    break;
+                case "3":
+                    if (!mazeEntered) {
+                        enterMaze();
+                    } else {
+                        System.out.println("You are already in the maze.");
+                    }
+                    break;
+                case "Gold hack":
+                    goldz += 50;
+                    System.out.println("System hacked. +50 gold");
+                    break;
+                default:
+                    System.out.println("Invalid input. Please try again.");
+            }
+        }
+    }
+
+    public static void shop() {
+        while (true) {
+            System.out.println("\n=== Shop Menu ===");
+            System.out.println("1. Wooden Pickaxe: +3 gold (10 gold)");
+            System.out.println("2. Stone Pickaxe: +5 gold (20 gold)");
+            System.out.println("3. Iron Pickaxe: +10 gold (50 gold)");
+            System.out.println("4. Buy Sword (50 gold)");
+            System.out.println("5. Buy Shield (50 gold)");
+            System.out.println("6. Buy Torch (50 gold)");
+            System.out.println("Type number to buy, or 'L' to leave.");
+            System.out.println("--NOTE: You may only buy 1 Tool (Excluding pickaxes). Choose wisely.");
+
+            String shopInput = scanner.nextLine();
+
+            switch (shopInput) {
+                case "1":
+                    if (goldz >= 10) {
+                        goldz -= 10;
+                        goldMultiplier = 3;
+                        System.out.println("You bought the Wooden Pickaxe.");
+                    } else {
+                        System.out.println("Not enough gold.");
+                    }
+                    break;
+                case "2":
+                    if (goldz >= 20) {
+                        goldz -= 20;
+                        goldMultiplier = 5;
+                        System.out.println("You bought the Stone Pickaxe.");
+                    } else {
+                        System.out.println("Not enough gold.");
+                    }
+                    break;
+                case "3":
+                    if (goldz >= 50) {
+                        goldz -= 50;
+                        goldMultiplier = 10;
+                        System.out.println("You bought the Iron Pickaxe.");
+                    } else {
+                        System.out.println("Not enough gold.");
+                    }
+                    break;
+                case "4":
+                    if (goldz >= 50 && !inventory.contains("Sword") && !hasTool()) {
+                        goldz -= 50;
+                        inventory.add("Sword");
+                        System.out.println("You bought a Sword.");
+                    } else {
+                        System.out.println("Not enough gold, you already have this, or you already bought a tool.");
+                    }
+                    break;
+                case "5":
+                    if (goldz >= 50 && !inventory.contains("Shield") && !hasTool()) {
+                        goldz -= 50;
+                        inventory.add("Shield");
+                        System.out.println("You bought a Shield.");
+                    } else {
+                        System.out.println("Not enough gold, you already have this, or you already bought a tool.");
+                    }
+                    break;
+                case "6":
+                    if (goldz >= 50 && !inventory.contains("Torch") && !hasTool()) {
+                        goldz -= 50;
+                        inventory.add("Torch");
+                        System.out.println("You bought a Torch.");
+                    } else {
+                        System.out.println("Not enough gold, you already have this, or you already bought a tool.");
+                    }
+                    break;
+                case "l":
+                case "L":
+                    System.out.println("Leaving the shop...");
+                    return;
+                default:
+                    System.out.println("Invalid choice.");
+            }
+            System.out.printf("Gold: %.0f\n", goldz);
+            System.out.println("Inventory: " + inventory);
+        }
+    }
+
+    public static void bossSequence() {
+        try {
+            System.out.println("An enormous troll approaches, your tool to fight it with is: " + inventory);
+            Thread.sleep(2000);
+            System.out.println("Fight started...");
+            Thread.sleep(4000);
+            if (inventory.contains("Torch")) {
+                System.out.println("The troll is afraid of light! It runs away and you find your prize: ");
+                Thread.sleep(2000);
+                System.out.println("Scroll start---The exit is at the coordinates of twos---Scroll end");
+                Thread.sleep(2000);
+            } else if (inventory.contains("Sword")) {
+                System.out.println("The fight begins...");
+                Thread.sleep(2000);
+                System.out.println("...SHING!....ARGG!...");
+                Thread.sleep(2000);
+                System.out.println("...ROWR!...GAHH!...");
+                Thread.sleep(2000);
+                System.out.println("...OOF!...BOOM!...");
+                Thread.sleep(2000);
+                boolean a = rand.nextBoolean();
+                if (a) {
+                    System.out.println("You defeated the troll! It runs away and you find your prize: ");
+                    Thread.sleep(2000);
+                    System.out.println("Scroll start---The exit is at the coordinates of twos---Scroll end");
+                    Thread.sleep(2000);
+                } else {
+                    System.out.println("The troll has beaten you!");
+                    System.out.println("--YOU LOSE!--");
+                    health -= 100;
+                    System.exit(0);
+                }
+            } else {
+                System.out.println("Wrong or no tool! You are defenseless!");
+                Thread.sleep(2000);
+                health -= 100;
+                System.out.println("The troll has beaten you!");
+                System.out.println("--YOU LOSE!--");
+                System.exit(0);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void bossSequence2() {
+        try {
+            System.out.println("A Gorgon with snakes for hair slithers towards you! Its gaze is terrifying.");
+            System.out.println("Your tool to fight it with is: " + inventory);
+            Thread.sleep(2000);
+            System.out.println("Fight started...");
+            Thread.sleep(3000);
+            if (inventory.contains("Shield")) {
+                System.out.println("You raise your polished shield! The Gorgon sees its own reflection and turns to stone!");
+                Thread.sleep(2000);
+                System.out.println("Behind the petrified monster, you find a carving on the wall:");
+                System.out.println("Scroll start---The final exit is a corner where a very negative man would go---Scroll end");
+                Thread.sleep(2000);
+            } else if (inventory.contains("Sword") || inventory.contains("Torch")) {
+                System.out.println("Your weapon is useless! You look into its eyes by mistake!");
+                Thread.sleep(2000);
+                health -= 100;
+                System.out.println("You have been turned to stone!");
+                System.out.println("--YOU LOSE!--");
+                System.exit(0);
+            } else {
+                System.out.println("You are defenseless! The Gorgon's gaze meets yours!");
+                Thread.sleep(2000);
+                health -= 100;
+                System.out.println("You have been turned to stone!");
+                System.out.println("--YOU LOSE!--");
+                System.exit(0);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean hasTool() {
+        return inventory.contains("Sword") || inventory.contains("Shield") || inventory.contains("Torch");
+    }
+
+    public static void enterMaze() {
+        mazeEntered = true;
+        System.out.println("You step into the Maze...");
+        System.out.println("Use W (up), A (left), S (down), D (right) to move.");
+        System.out.println("A mysterious man approaches, and tells you a secret: 'The path forward lies in the deepest, darkest corner.'"); // Corrected clue
+        System.out.println("W represents a wall and P represents you as the player");
+        mazeLoop();
+    }
+
+    public static void startMaze2() {
+        currentMazeLevel = 2;
+        maze[mazeY + 4][mazeX + 4] = ' ';
+        mazeX = 0;
+        mazeY = 0;
+        maze2[4][4] = 'P';
+
+        System.out.println("\n\nThe floor gives way and you fall into a deeper, more complex maze!");
+        System.out.println("The air is colder here. You must find the true exit.");
+        System.out.println("A whisper echoes: 'The beast of this domain turns flesh to stone. Only a polished reflection can save you.'");
+        mazeLoop();
+    }
+
+    public static void mazeLoop() {
+        while (true) {
+            printMaze();
+            System.out.printf("\nYou are at position (%d, %d).\n", mazeX, mazeY);
+            System.out.println("Enter direction (W/A/S/D)");
+            String move = scanner.nextLine().toLowerCase();
+
+            int prevX = mazeX;
+            int prevY = mazeY;
+
+            switch (move) {
+                case "w": mazeY++; break;
+                case "s": mazeY--; break;
+                case "a": mazeX--; break;
+                case "d": mazeX++; break;
+                default:
+                    System.out.println("Invalid direction.");
+                    continue;
+            }
+            
+           
+            if (mazeY > 4 || mazeY < -4 || mazeX > 4 || mazeX < -4) {
+                System.out.println("You hit an invisible boundary! Moving back.");
+                mazeX = prevX;
+                mazeY = prevY;
+            }
+
+            char[][] currentMaze = (currentMazeLevel == 1) ? maze : maze2;
+
+            if (currentMaze[mazeY + 4][mazeX + 4] == 'W') {
+                System.out.println("You hit a wall! Moving back.");
+                mazeX = prevX;
+                mazeY = prevY;
+            } else {
+                currentMaze[prevY + 4][prevX + 4] = ' ';
+                currentMaze[mazeY + 4][mazeX + 4] = 'P';
+            }
+
+            if (currentMazeLevel == 1) {
+                if (mazeX == 3 && mazeY == -2) {
+                    startMaze2();
+                    return; 
+                }
+                if (mazeX == 4 && mazeY == 4 && !trollDefeated) { 
+                    System.out.println("WARNING: BOSS FIGHT IMMINENT! Hopefully you came prepared...");
+                    trollDefeated = true;
+                    bossSequence();
+                }
+            } else if (currentMazeLevel == 2) {
+                if (mazeX == -4 && mazeY == -4) {
+                    System.out.println("You found the final exit! You see sunlight and breathe fresh air at last!");
+                    System.out.println("--YOU WIN!--");
+                    System.exit(0);
+                }
+                if (mazeX == 4 && mazeY == 4 && !gorgonDefeated) {
+                    System.out.println("WARNING: A fearsome foe blocks your path!");
+                    gorgonDefeated = true;
+                    bossSequence2();
+                }
+                
+            }
+
+            if (currentMazeLevel == 1) {
+                randomMazeEvent();
+            } else {
+                randomMazeEvent2();
+            }
+
+            if (health <= 0) {
+                System.out.println("You have perished in the maze.");
+                System.out.println("--YOU LOSE.--");
+                System.exit(0);
+            }
+        }
+    }
+
+    public static void printMaze() {
+        char[][] currentMaze = (currentMazeLevel == 1) ? maze : maze2;
+        String borderLine = "+---".repeat(9) + "+";
+        System.out.println("Maze layout (Level " + currentMazeLevel + "):");
+        System.out.println(borderLine);
+        for (int y = 4; y >= -4; y--) {
+            System.out.print("|");
+            for (int x = -4; x <= 4; x++) {
+                System.out.print(" " + currentMaze[y + 4][x + 4] + " |");
+            }
+            System.out.println();
+            System.out.println(borderLine);
+        }
+    }
+
+    public static void randomMazeEvent() {
+        int event = rand.nextInt(10);
+        if (event > 8) {
+            event = 6;
+        } else {
+            event = rand.nextInt(6);
+        }
+
+        switch (event) {
+            case 0:
+            case 1:
+                System.out.println("Nothing here. You move cautiously...");
+                break;
+            case 2:
+                System.out.println("You found abandoned supplies!");
+                if (health <= 85) health += 15;
+                System.out.println("Health restored to: " + health);
+                break;
+            case 3:
+                System.out.println("A trap is triggered!");
+                if (inventory.contains("Shield")) {
+                    System.out.println("Your shield blocks the damage.");
+                } else {
+                    System.out.println("You take 25 damage!");
+                    health -= 25;
+                }
+                break;
+            case 4:
+                System.out.println("A wild enemy appears!");
+                if (inventory.contains("Sword")) {
+                    System.out.println("You defeat it with your sword!");
+                } else if (inventory.contains("Shield")) {
+                    System.out.println("You blocked it with your shield, but took some damage.");
+                    health -= 25;
+                } else {
+                    System.out.println("You have no weapon! You take 50 damage!");
+                    health -= 50;
+                }
+                break;
+            case 5:
+                System.out.println("Heavy fog has blurred your vision.");
+                if (inventory.contains("Torch")) {
+                    System.out.println("Fog cleared.");
+                } else {
+                    int newX = rand.nextInt(9) - 4;
+                    int newY = rand.nextInt(9) - 4;
+                    if (maze[newY + 4][newX + 4] != 'W') {
+                        maze[mazeY + 4][mazeX + 4] = ' ';
+                        mazeX = newX;
+                        mazeY = newY;
+                        maze[mazeY + 4][mazeX + 4] = 'P';
+                    } else {
+                        System.out.println("You got lost but hit a wall. Staying in place.");
+                    }
+                }
+                break;
+            case 6:
+                System.out.println("You discovered a clue written on the wall!");
+                System.out.println("It reads: 'The exit to the next level lies where the first number is three and the second is two.'"); 
+                break;
+        }
+        System.out.println("Current Health: " + health);
+    }
+
+    public static void randomMazeEvent2() {
+        int event = rand.nextInt(7);
+
+        switch (event) {
+            case 0:
+            case 1:
+                System.out.println("The air grows cold, but nothing happens.");
+                break;
+            case 2:
+                System.out.println("You find a glowing crystal on the ground. It revitalizes you slightly.");
+                if (health <= 90) health += 10;
+                System.out.println("Health restored to: " + health);
+                break;
+            case 3:
+                System.out.println("You step on a pressure plate! A volley of stone darts shoots from the wall!");
+                if (inventory.contains("Shield")) {
+                    System.out.println("Your shield deflects the darts perfectly.");
+                } else {
+                    System.out.println("You take 30 damage!");
+                    health -= 30;
+                }
+                break;
+            case 4:
+                System.out.println("A Shadow Stalker emerges from the darkness!");
+                if (inventory.contains("Shield")) {
+                    System.out.println("You use your shield to bash the creature, and it dissipates back into the shadows.");
+                } else if (inventory.contains("Sword")) {
+                    System.out.println("You slash at the creature, but it's hard to hit. You take 20 damage before it flees.");
+                    health -= 20;
+                } else {
+                    System.out.println("Defenseless, the shadow creature claws at you! You take 40 damage!");
+                    health -= 40;
+                }
+                break;
+            case 5:
+                System.out.println("Ghostly apparitions swirl around you, trying to confuse you!");
+                if (inventory.contains("Torch")) {
+                    System.out.println("The light from your torch scares them away.");
+                } else {
+                    System.out.println("The unsettling vision passes, but you find yourself led into a trap.");
+                    health -= 15;
+                    System.out.println("-15 health");
+                }
+                break;
+            case 6:
+                System.out.println("A whisper echoes from the walls...");
+                System.out.println("It says: 'I'm positvely sure the beast in in a corner."); 
+                break;
+        }
+        System.out.println("Current Health: " + health);
+    }
+}

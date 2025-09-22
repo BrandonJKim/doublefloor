@@ -254,7 +254,7 @@ public class Main {
         mazeEntered = true;
         System.out.println("You step into the Maze...");
         System.out.println("Use W (up), A (left), S (down), D (right) to move.");
-        System.out.println("A mysterious man approaches, and tells you a secret: 'The path forward lies in the deepest, darkest corner.'"); // Corrected clue
+        System.out.println("A mysterious man approaches, and tells you a secret: 'The first step forward lies at -1,4.'"); 
         System.out.println("W represents a wall and P represents you as the player");
         mazeLoop();
     }
@@ -327,7 +327,7 @@ public class Main {
                     System.exit(0);
                 }
                 if (mazeX == 4 && mazeY == 4 && !gorgonDefeated) {
-                    System.out.println("WARNING: A fearsome foe blocks your path!");
+                    System.out.println("WARNING: A fearsome enemy blocks your path!");
                     gorgonDefeated = true;
                     bossSequence2();
                 }
@@ -356,7 +356,7 @@ public class Main {
         for (int y = 4; y >= -4; y--) {
             System.out.print("|");
             for (int x = -4; x <= 4; x++) {
-                // Corrected print logic to use the inverted y-index
+               
                 System.out.print(" " + currentMaze[4 - y][x + 4] + " |");
             }
             System.out.println();
@@ -422,7 +422,7 @@ public class Main {
                 break;
             case 6:
                 System.out.println("You discovered a clue written on the wall!");
-                System.out.println("It reads: 'The exit to the next level lies where the first number is three and the second is two.'");
+                System.out.println("It reads: 'The exit to the next level lies where the first number is a three and the second is a two.'");
                 break;
         }
         System.out.println("Current Health: " + health);
@@ -444,7 +444,7 @@ public class Main {
             case 3:
                 System.out.println("You step on a pressure plate! A volley of stone darts shoots from the wall!");
                 if (inventory.contains("Shield")) {
-                    System.out.println("Your shield deflects the darts perfectly.");
+                    System.out.println("Your shield deflects the darts away.");
                 } else {
                     System.out.println("You take 30 damage!");
                     health -= 30;

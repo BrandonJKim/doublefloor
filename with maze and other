@@ -10,11 +10,11 @@ public class Main {
     private static int health = 100;
     private static int mazeX = 0;
     private static int mazeY = 0;
-    private static boolean trollDefeated = false; 
-    private static boolean gorgonDefeated = false; 
+    private static boolean trollDefeated = false;
+    private static boolean gorgonDefeated = false;
     private static int currentMazeLevel = 1;
 
-    // OG Maze 1
+
     static char[][] maze = {
             {'W', ' ', ' ', ' ', 'W', 'W', ' ', ' ', ' '}, // y=4
             {'W', ' ', ' ', 'W', ' ', 'W', 'W', ' ', 'W'}, // y=3
@@ -27,7 +27,7 @@ public class Main {
             {'W', 'W', 'W', ' ', 'W', 'W', ' ', ' ', 'W'}  // y=-4
     };
 
-    // New Maze 2
+
     static char[][] maze2 = {
             {' ', 'W', ' ', 'W', ' ', 'W', ' ', 'W', ' '}, // y=4
             {' ', 'W', ' ', 'W', ' ', 'W', ' ', ' ', ' '}, // y=3
@@ -42,9 +42,6 @@ public class Main {
 
     public static void main(String[] args) {
         System.out.println("Trapped in a maze, you must find the way out.");
-        maze[4][4] = 'P'; 
-        mazeX = 0;
-        mazeY = 0;
         gold();
     }
 
@@ -76,6 +73,14 @@ public class Main {
                     goldz += 50;
                     System.out.println("System hacked. +50 gold");
                     break;
+                case "Bribe":
+                    if (goldz >= 200) {
+                        System.out.println("--YOU WIN! (albiet not in the most morally corect of ways.)--");
+                        System.exit(0);
+                    } else {
+                        System.out.println("Invalid input. Please try again.");
+                        break;
+                    }
                 default:
                     System.out.println("Invalid input. Please try again.");
             }
@@ -256,11 +261,11 @@ public class Main {
 
     public static void startMaze2() {
         currentMazeLevel = 2;
-        maze[mazeY + 4][mazeX + 4] = ' ';
+        maze[4 - mazeY][mazeX + 4] = ' '; // Corrected: Clear old position with adjusted y
         mazeX = 0;
         mazeY = 0;
         maze2[4][4] = 'P';
-
+        
         System.out.println("\n\nThe floor gives way and you fall into a deeper, more complex maze!");
         System.out.println("The air is colder here. You must find the true exit.");
         System.out.println("A whisper echoes: 'The beast of this domain turns flesh to stone. Only a polished reflection can save you.'");
@@ -287,22 +292,24 @@ public class Main {
                     continue;
             }
             
-           
+            // Check for boundaries
             if (mazeY > 4 || mazeY < -4 || mazeX > 4 || mazeX < -4) {
                 System.out.println("You hit an invisible boundary! Moving back.");
                 mazeX = prevX;
                 mazeY = prevY;
             }
-
+            
             char[][] currentMaze = (currentMazeLevel == 1) ? maze : maze2;
 
-            if (currentMaze[mazeY + 4][mazeX + 4] == 'W') {
+            // Check for walls and update player position
+            // The y-index must be inverted because the array is ordered from y=4 down to y=-4
+            if (currentMaze[4 - mazeY][mazeX + 4] == 'W') {
                 System.out.println("You hit a wall! Moving back.");
                 mazeX = prevX;
                 mazeY = prevY;
             } else {
-                currentMaze[prevY + 4][prevX + 4] = ' ';
-                currentMaze[mazeY + 4][mazeX + 4] = 'P';
+                currentMaze[4 - prevY][prevX + 4] = ' ';
+                currentMaze[4 - mazeY][mazeX + 4] = 'P';
             }
 
             if (currentMazeLevel == 1) {
@@ -310,7 +317,7 @@ public class Main {
                     startMaze2();
                     return; 
                 }
-                if (mazeX == 4 && mazeY == 4 && !trollDefeated) { 
+                if (mazeX == 4 && mazeY == 4 && !trollDefeated) {
                     System.out.println("WARNING: BOSS FIGHT IMMINENT! Hopefully you came prepared...");
                     trollDefeated = true;
                     bossSequence();
@@ -351,7 +358,8 @@ public class Main {
         for (int y = 4; y >= -4; y--) {
             System.out.print("|");
             for (int x = -4; x <= 4; x++) {
-                System.out.print(" " + currentMaze[y + 4][x + 4] + " |");
+                // Corrected print logic to use the inverted y-index
+                System.out.print(" " + currentMaze[4 - y][x + 4] + " |");
             }
             System.out.println();
             System.out.println(borderLine);
@@ -404,11 +412,11 @@ public class Main {
                 } else {
                     int newX = rand.nextInt(9) - 4;
                     int newY = rand.nextInt(9) - 4;
-                    if (maze[newY + 4][newX + 4] != 'W') {
-                        maze[mazeY + 4][mazeX + 4] = ' ';
+                    if (maze[4 - (newY)][newX + 4] != 'W') { 
+                        maze[4 - mazeY][mazeX + 4] = ' '; 
                         mazeX = newX;
                         mazeY = newY;
-                        maze[mazeY + 4][mazeX + 4] = 'P';
+                        maze[4 - mazeY][mazeX + 4] = 'P'; 
                     } else {
                         System.out.println("You got lost but hit a wall. Staying in place.");
                     }
@@ -416,7 +424,7 @@ public class Main {
                 break;
             case 6:
                 System.out.println("You discovered a clue written on the wall!");
-                System.out.println("It reads: 'The exit to the next level lies where the first number is three and the second is two.'"); 
+                System.out.println("It reads: 'The exit to the next level lies where the first number is three and the second is two.'");
                 break;
         }
         System.out.println("Current Health: " + health);
@@ -468,7 +476,7 @@ public class Main {
                 break;
             case 6:
                 System.out.println("A whisper echoes from the walls...");
-                System.out.println("It says: 'I'm positvely sure the beast in in a corner."); 
+                System.out.println("It says: 'I'm positvely sure the beast in in a corner.");
                 break;
         }
         System.out.println("Current Health: " + health);

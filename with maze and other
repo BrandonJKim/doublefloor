@@ -35,7 +35,7 @@ public class Main {
             {' ', ' ', ' ', ' ', 'W', ' ', ' ', ' ', ' '}, // y=1
             {'W', 'W', 'W', ' ', ' ', ' ', 'W', 'W', ' '}, // y=0
             {' ', ' ', ' ', 'W', ' ', 'W', ' ', ' ', ' '}, // y=-1
-            {'W', 'W', ' ', ' ', ' ', 'W', ' ', 'W', ' '}, // y=-2
+            {'W', ' ', ' ', ' ', ' ', 'W', ' ', 'W', ' '}, // y=-2
             {' ', ' ', 'W', 'W', ' ', 'W', ' ', 'W', ' '}, // y=-3
             {' ', 'W', ' ', ' ', ' ', ' ', ' ', 'W', ' '}  // y=-4
     };
@@ -254,14 +254,14 @@ public class Main {
         mazeEntered = true;
         System.out.println("You step into the Maze...");
         System.out.println("Use W (up), A (left), S (down), D (right) to move.");
-        System.out.println("A mysterious man approaches, and tells you a secret: 'The path forward lies in the deepest, darkest corner.'"); // Corrected clue
+        System.out.println("A mysterious man approaches, and tells you a secret: 'A monster lies at -1,4 which may provide a clue.'"); 
         System.out.println("W represents a wall and P represents you as the player");
         mazeLoop();
     }
 
     public static void startMaze2() {
         currentMazeLevel = 2;
-        maze[4 - mazeY][mazeX + 4] = ' '; // Corrected: Clear old position with adjusted y
+        maze[4 - mazeY][mazeX + 4] = ' '; 
         mazeX = 0;
         mazeY = 0;
         maze2[4][4] = 'P';
@@ -292,7 +292,7 @@ public class Main {
                     continue;
             }
             
-            // Check for boundaries
+
             if (mazeY > 4 || mazeY < -4 || mazeX > 4 || mazeX < -4) {
                 System.out.println("You hit an invisible boundary! Moving back.");
                 mazeX = prevX;
@@ -301,8 +301,7 @@ public class Main {
             
             char[][] currentMaze = (currentMazeLevel == 1) ? maze : maze2;
 
-            // Check for walls and update player position
-            // The y-index must be inverted because the array is ordered from y=4 down to y=-4
+
             if (currentMaze[4 - mazeY][mazeX + 4] == 'W') {
                 System.out.println("You hit a wall! Moving back.");
                 mazeX = prevX;
@@ -358,7 +357,7 @@ public class Main {
         for (int y = 4; y >= -4; y--) {
             System.out.print("|");
             for (int x = -4; x <= 4; x++) {
-                // Corrected print logic to use the inverted y-index
+
                 System.out.print(" " + currentMaze[4 - y][x + 4] + " |");
             }
             System.out.println();
@@ -424,7 +423,7 @@ public class Main {
                 break;
             case 6:
                 System.out.println("You discovered a clue written on the wall!");
-                System.out.println("It reads: 'The exit to the next level lies where the first number is three and the second is two.'");
+                System.out.println("It reads: 'The exit is at the coordinates of double negatives.'");
                 break;
         }
         System.out.println("Current Health: " + health);

@@ -13,31 +13,30 @@ public class Main {
     private static boolean trollDefeated = false;
     private static boolean gorgonDefeated = false;
     private static int currentMazeLevel = 1;
-
+    private static boolean teleportDrop = false;
 
     static char[][] maze = {
-            {'W', ' ', ' ', ' ', 'W', 'W', ' ', ' ', ' '}, // y=4
-            {'W', ' ', ' ', 'W', ' ', 'W', 'W', ' ', 'W'}, // y=3
-            {' ', ' ', 'W', ' ', ' ', 'W', ' ', ' ', 'W'}, // y=2
-            {' ', 'W', 'W', 'W', ' ', ' ', 'W', ' ', ' '}, // y=1
-            {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'W'}, // y=0
-            {'W', ' ', 'W', 'W', 'W', ' ', 'W', ' ', ' '}, // y=-1
-            {' ', ' ', 'W', ' ', 'W', 'W', 'W', ' ', ' '}, // y=-2
-            {'W', ' ', ' ', ' ', ' ', ' ', ' ', 'W', 'W'}, // y=-3
-            {'W', 'W', 'W', ' ', 'W', 'W', ' ', ' ', 'W'}  // y=-4
+        {'W', ' ', ' ', ' ', 'W', 'W', ' ', ' ', ' '}, // y=4
+        {'W', ' ', ' ', 'W', ' ', 'W', 'W', ' ', 'W'}, // y=3
+        {' ', ' ', 'W', ' ', ' ', 'W', ' ', ' ', 'W'}, // y=2
+        {' ', 'W', 'W', 'W', ' ', ' ', 'W', ' ', ' '}, // y=1
+        {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'W'}, // y=0
+        {'W', ' ', 'W', 'W', 'W', ' ', 'W', ' ', ' '}, // y=-1
+        {' ', ' ', 'W', ' ', 'W', 'W', 'W', ' ', ' '}, // y=-2
+        {'W', ' ', ' ', ' ', ' ', ' ', ' ', 'W', 'W'}, // y=-3
+        {'W', 'W', 'W', ' ', 'W', 'W', ' ', ' ', 'W'}  // y=-4
     };
 
-
     static char[][] maze2 = {
-            {' ', 'W', ' ', 'W', ' ', 'W', ' ', 'W', ' '}, // y=4
-            {' ', 'W', ' ', 'W', ' ', 'W', ' ', ' ', ' '}, // y=3
-            {' ', 'W', ' ', 'W', ' ', ' ', 'W', 'W', ' '}, // y=2
-            {' ', ' ', ' ', ' ', 'W', ' ', ' ', ' ', ' '}, // y=1
-            {'W', 'W', 'W', ' ', ' ', ' ', 'W', 'W', ' '}, // y=0
-            {' ', ' ', ' ', 'W', ' ', 'W', ' ', ' ', ' '}, // y=-1
-            {'W', 'W', ' ', ' ', ' ', 'W', ' ', 'W', ' '}, // y=-2
-            {' ', ' ', 'W', 'W', ' ', 'W', ' ', 'W', ' '}, // y=-3
-            {' ', 'W', ' ', ' ', ' ', ' ', ' ', 'W', ' '}  // y=-4
+        {' ', 'W', ' ', ' ', ' ', 'W', ' ', 'W', ' '}, // y=4
+        {' ', ' ', 'W', 'W', ' ', 'W', ' ', ' ', ' '}, // y=3
+        {' ', 'W', ' ', 'W', ' ', ' ', 'W', 'W', ' '}, // y=2
+        {' ', ' ', ' ', ' ', 'W', ' ', ' ', ' ', ' '}, // y=1
+        {'W', 'W', ' ', ' ', ' ', ' ', 'W', 'W', ' '}, // y=0
+        {' ', ' ', ' ', 'W', ' ', 'W', ' ', ' ', ' '}, // y=-1
+        {'W', 'W', ' ', ' ', ' ', 'W', ' ', 'W', ' '}, // y=-2
+        {' ', ' ', ' ', 'W', ' ', 'W', ' ', 'W', ' '}, // y=-3
+        {' ', 'W', ' ', ' ', ' ', ' ', ' ', 'W', ' '}  // y=-4
     };
 
     public static void main(String[] args) {
@@ -56,12 +55,8 @@ public class Main {
             String input = scanner.nextLine();
 
             switch (input) {
-                case "1":
-                    goldz += goldMultiplier;
-                    break;
-                case "2":
-                    shop();
-                    break;
+                case "1": goldz += goldMultiplier; break;
+                case "2": shop(); break;
                 case "3":
                     if (!mazeEntered) {
                         enterMaze();
@@ -69,18 +64,22 @@ public class Main {
                         System.out.println("You are already in the maze.");
                     }
                     break;
-                case "Gold hack":
-                    goldz += 50;
+                case "Gold hack": 
+                    goldz += 50; 
                     System.out.println("System hacked. +50 gold");
                     break;
                 case "Bribe":
                     if (goldz >= 200) {
-                        System.out.println("--YOU WIN! (albiet not in the most morally corect of ways.)--");
+                        System.out.println("--YOU WIN!--");
                         System.exit(0);
                     } else {
                         System.out.println("Invalid input. Please try again.");
                         break;
                     }
+                case "//cmd:teleDrop": 
+                    teleportDrop = true;
+                    System.out.println("You can now use teleportDrops.");
+                    break;
                 default:
                     System.out.println("Invalid input. Please try again.");
             }
@@ -153,11 +152,11 @@ public class Main {
                         inventory.add("Torch");
                         System.out.println("You bought a Torch.");
                     } else {
-                        System.out.println("Not enough gold, you already have this, or you already bought a tool.");
+                        System.out.println("Not enough gold, already have this, or you already bought a tool.");
                     }
                     break;
                 case "l":
-                case "L":
+                case "L": 
                     System.out.println("Leaving the shop...");
                     return;
                 default:
@@ -205,7 +204,6 @@ public class Main {
                 Thread.sleep(2000);
                 health -= 100;
                 System.out.println("The troll has beaten you!");
-                System.out.println("--YOU LOSE!--");
                 System.exit(0);
             }
         } catch (InterruptedException e) {
@@ -254,18 +252,20 @@ public class Main {
         mazeEntered = true;
         System.out.println("You step into the Maze...");
         System.out.println("Use W (up), A (left), S (down), D (right) to move.");
-        System.out.println("A mysterious man approaches, and tells you a secret: 'The first step forward lies at -1,4.'"); 
+        System.out.println("A mysterious man approaches, and tells you a secret: 'The first step forward lies at -1,4.'");
         System.out.println("W represents a wall and P represents you as the player");
+        mazeX = 0;
+        mazeY = 0;
+        maze[4 - mazeY][mazeX + 4] = 'P';
         mazeLoop();
     }
 
     public static void startMaze2() {
         currentMazeLevel = 2;
-        maze[4 - mazeY][mazeX + 4] = ' ';
         mazeX = 0;
         mazeY = 0;
+        maze[4 - mazeY][mazeX + 4] = ' '; 
         maze2[4][4] = 'P';
-        
         System.out.println("\n\nThe floor gives way and you fall into a deeper, more complex maze!");
         System.out.println("The air is colder here. You must find the true exit.");
         System.out.println("A whisper echoes: 'The beast of this domain turns flesh to stone. Only a polished reflection can save you.'");
@@ -276,44 +276,90 @@ public class Main {
         while (true) {
             printMaze();
             System.out.printf("\nYou are at position (%d, %d).\n", mazeX, mazeY);
-            System.out.println("Enter direction (W/A/S/D)");
+            System.out.println("Enter direction (W/A/S/D): ");
             String move = scanner.nextLine().toLowerCase();
 
             int prevX = mazeX;
             int prevY = mazeY;
 
+            
+            if (move.equals("teleport")) {
+                if (teleportDrop == true) {
+                    System.out.print("Enter new X coordinate (-4 to 4): ");
+                    int newX;
+                    try {
+                        newX = Integer.parseInt(scanner.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid coordinate.");
+                        continue;
+                    }
+                    System.out.print("Enter new Y coordinate (-4 to 4): ");
+                    int newY;
+                    try {
+                        newY = Integer.parseInt(scanner.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid coordinate.");
+                        continue;
+                    }
+                    if (newX >= -4 && newX <= 4 && newY >= -4 && newY <= 4) {
+                        try {
+                            mazeX = newX;
+                            mazeY = newY;
+                            Thread.sleep(1000);
+                            System.out.println("Teleporting...");
+                            Thread.sleep(3000);
+                        
+                            char[][] currentMaze = (currentMazeLevel == 1) ? maze : maze2;
+                            currentMaze[4 - prevY][prevX + 4] = ' ';
+                            currentMaze[4 - mazeY][mazeX + 4] = 'P';
+                        } catch (InterruptedException e) {
+                        }
+                    } else {
+                        System.out.println("Coordinates out of bounds.");
+                    }
+                } else {
+                    System.out.println("Invalid input.");
+                }
+                continue;
+            }
+
+           
             switch (move) {
                 case "w": mazeY++; break;
                 case "s": mazeY--; break;
                 case "a": mazeX--; break;
                 case "d": mazeX++; break;
                 default:
-                    System.out.println("Invalid direction.");
+                    System.out.println("Invalid input.");
                     continue;
             }
 
-            if (mazeY > 4 || mazeY < -4 || mazeX > 4 || mazeX < -4) {
-                System.out.println("You hit an invisible boundary! Moving back.");
+            
+            if (mazeX > 4 || mazeX < -4 || mazeY > 4 || mazeY < -4) {
+                System.out.println("Map boundary reached. Moving back.");
                 mazeX = prevX;
                 mazeY = prevY;
+                continue;
             }
+
             
             char[][] currentMaze = (currentMazeLevel == 1) ? maze : maze2;
-
-
             if (currentMaze[4 - mazeY][mazeX + 4] == 'W') {
                 System.out.println("You hit a wall! Moving back.");
                 mazeX = prevX;
                 mazeY = prevY;
-            } else {
-                currentMaze[4 - prevY][prevX + 4] = ' ';
-                currentMaze[4 - mazeY][mazeX + 4] = 'P';
+                continue;
             }
 
+            
+            currentMaze[4 - prevY][prevX + 4] = ' ';
+            currentMaze[4 - mazeY][mazeX + 4] = 'P';
+
+            
             if (currentMazeLevel == 1) {
                 if (mazeX == 3 && mazeY == -2) {
                     startMaze2();
-                    return; 
+                    return;
                 }
                 if (mazeX == 4 && mazeY == 4 && !trollDefeated) {
                     System.out.println("WARNING: BOSS FIGHT IMMINENT! Hopefully you came prepared...");
@@ -331,9 +377,9 @@ public class Main {
                     gorgonDefeated = true;
                     bossSequence2();
                 }
-                
             }
 
+            
             if (currentMazeLevel == 1) {
                 randomMazeEvent();
             } else {
@@ -356,7 +402,6 @@ public class Main {
         for (int y = 4; y >= -4; y--) {
             System.out.print("|");
             for (int x = -4; x <= 4; x++) {
-               
                 System.out.print(" " + currentMaze[4 - y][x + 4] + " |");
             }
             System.out.println();
@@ -371,7 +416,6 @@ public class Main {
         } else {
             event = rand.nextInt(6);
         }
-
         switch (event) {
             case 0:
             case 1:
@@ -410,11 +454,11 @@ public class Main {
                 } else {
                     int newX = rand.nextInt(9) - 4;
                     int newY = rand.nextInt(9) - 4;
-                    if (maze[4 - (newY)][newX + 4] != 'W') { 
-                        maze[4 - mazeY][mazeX + 4] = ' '; 
+                    if (maze[4 - (newY)][newX + 4] != 'W') {
+                        maze[4 - mazeY][mazeX + 4] = ' ';
                         mazeX = newX;
                         mazeY = newY;
-                        maze[4 - mazeY][mazeX + 4] = 'P'; 
+                        maze[4 - mazeY][mazeX + 4] = 'P';
                     } else {
                         System.out.println("You got lost but hit a wall. Staying in place.");
                     }
@@ -430,7 +474,6 @@ public class Main {
 
     public static void randomMazeEvent2() {
         int event = rand.nextInt(7);
-
         switch (event) {
             case 0:
             case 1:

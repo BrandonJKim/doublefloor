@@ -14,6 +14,7 @@ public class Main {
     private static boolean gorgonDefeated = false;
     private static int currentMazeLevel = 1;
     private static boolean teleportDrop = false;
+    private static boolean healthpotDrop = false;
 
     static char[][] maze = {
         {'W', ' ', ' ', ' ', 'W', 'W', ' ', ' ', ' '}, // y=4
@@ -65,8 +66,8 @@ public class Main {
                     }
                     break;
                 case "Gold hack": 
-                    goldz += 50; 
-                    System.out.println("System hacked. +50 gold");
+                    goldz += 100; 
+                    System.out.println("System hacked. +100 gold");
                     break;
                 case "Bribe":
                     if (goldz >= 200) {
@@ -80,6 +81,10 @@ public class Main {
                     teleportDrop = true;
                     System.out.println("You can now use teleportDrops.");
                     break;
+                case "//cmd:hpDrop":
+                    healthpotDrop = true;
+                    System.out.println("You can now find healthpots.");
+                    break;
                 default:
                     System.out.println("Invalid input. Please try again.");
             }
@@ -87,6 +92,7 @@ public class Main {
     }
 
     public static void shop() {
+        int toolsBought = 0;
         while (true) {
             System.out.println("\n=== Shop Menu ===");
             System.out.println("1. Wooden Pickaxe: +3 gold (10 gold)");
@@ -96,7 +102,7 @@ public class Main {
             System.out.println("5. Buy Shield (50 gold)");
             System.out.println("6. Buy Torch (50 gold)");
             System.out.println("Type number to buy, or 'L' to leave.");
-            System.out.println("--NOTE: You may only buy 1 Tool (Excluding pickaxes). Choose wisely.");
+            System.out.println("--NOTE: You may only buy 2 Tools (Excluding pickaxes). Choose wisely.");
 
             String shopInput = scanner.nextLine();
 
@@ -129,30 +135,33 @@ public class Main {
                     }
                     break;
                 case "4":
-                    if (goldz >= 50 && !inventory.contains("Sword") && !hasTool()) {
+                    if (goldz >= 50 && !inventory.contains("Sword") && toolsBought < 2) {
                         goldz -= 50;
                         inventory.add("Sword");
+                        toolsBought++;
                         System.out.println("You bought a Sword.");
                     } else {
-                        System.out.println("Not enough gold, you already have this, or you already bought a tool.");
+                        System.out.println("Not enough gold, you already have this, or you've reached your tool limit.");
                     }
                     break;
                 case "5":
-                    if (goldz >= 50 && !inventory.contains("Shield") && !hasTool()) {
+                    if (goldz >= 50 && !inventory.contains("Shield") && toolsBought < 2) {
                         goldz -= 50;
                         inventory.add("Shield");
+                        toolsBought++;
                         System.out.println("You bought a Shield.");
                     } else {
-                        System.out.println("Not enough gold, you already have this, or you already bought a tool.");
+                        System.out.println("Not enough gold, you already have this, or you've reached your tool limit.");
                     }
                     break;
                 case "6":
-                    if (goldz >= 50 && !inventory.contains("Torch") && !hasTool()) {
+                    if (goldz >= 50 && !inventory.contains("Torch") && toolsBought < 2) {
                         goldz -= 50;
                         inventory.add("Torch");
+                        toolsBought++;
                         System.out.println("You bought a Torch.");
                     } else {
-                        System.out.println("Not enough gold, already have this, or you already bought a tool.");
+                        System.out.println("Not enough gold, already have this, or you've reached your tool limit.");
                     }
                     break;
                 case "l":
@@ -323,7 +332,7 @@ public class Main {
                 continue;
             }
 
-           
+            
             switch (move) {
                 case "w": mazeY++; break;
                 case "s": mazeY--; break;
@@ -361,7 +370,7 @@ public class Main {
                     startMaze2();
                     return;
                 }
-                if (mazeX == 4 && mazeY == 4 && !trollDefeated) {
+                if (mazeX == -1 && mazeY == 4 && !trollDefeated) {
                     System.out.println("WARNING: BOSS FIGHT IMMINENT! Hopefully you came prepared...");
                     trollDefeated = true;
                     bossSequence();
@@ -480,9 +489,12 @@ public class Main {
                 System.out.println("The air grows cold, but nothing happens.");
                 break;
             case 2:
-                System.out.println("You find a glowing crystal on the ground. It revitalizes you slightly.");
-                if (health <= 90) health += 10;
-                System.out.println("Health restored to: " + health);
+                if (healthpotDrop) {
+                    System.out.println("You found a glowing crystal on the ground. It revitalizes you slightly.");
+                    if (health <= 90) health += 10;
+                } else {
+                    System.out.println("The air grows cold, but nothing happens.");
+                }
                 break;
             case 3:
                 System.out.println("You step on a pressure plate! A volley of stone darts shoots from the wall!");
@@ -517,7 +529,7 @@ public class Main {
                 break;
             case 6:
                 System.out.println("A whisper echoes from the walls...");
-                System.out.println("It says: 'I'm positvely sure the beast in in a corner.");
+                System.out.println("It says: 'I'm positively sure the beast in in a corner.");
                 break;
         }
         System.out.println("Current Health: " + health);
